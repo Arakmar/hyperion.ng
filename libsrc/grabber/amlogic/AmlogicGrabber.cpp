@@ -208,12 +208,15 @@ int AmlogicGrabber::grabFrame_ge2d(Image<ColorRgb> & image)
 		memset(_ge2dVideoBufferPtr, 0, _ge2dIonBuffer->BufferSize());
 	}
 
-	int canvas_index;
-	if (ioctl(_videoDev, AMVIDEO_EXT_GET_CURRENT_VIDEOFRAME, &canvas_index) < 0)
+    uint32_t canvas_index;
+    int ioctl_ret = ioctl(_videoDev, AMVIDEO_EXT_GET_CURRENT_VIDEOFRAME, &canvas_index);
+	if (ioctl_ret < 0)
 	{
 		Error(_log, "AMVIDEO_EXT_GET_CURRENT_VIDEOFRAME failed.");
 		return -1;
 	}
+
+    Debug(_log, "after AMVIDEO_EXT_GET_CURRENT_VIDEOFRAME (%d)",canvas_index);
 
 	uint32_t canvas0addr;
 
@@ -223,12 +226,16 @@ int AmlogicGrabber::grabFrame_ge2d(Image<ColorRgb> & image)
 		return -1;
 	}
 
+    Debug(_log, "after AMVIDEO_EXT_CURRENT_VIDEOFRAME_GET_CANVAS0ADDR (%d)",canvas0addr);
+
 	uint32_t ge2dformat;
 	if (ioctl(_videoDev, AMVIDEO_EXT_CURRENT_VIDEOFRAME_GET_GE2D_FORMAT, &ge2dformat) <0)
 	{
 		Error(_log, "AMVIDEO_EXT_CURRENT_VIDEOFRAME_GET_GE2D_FORMAT failed.");
 		return -1;
 	}
+
+    Debug(_log, "after AMVIDEO_EXT_CURRENT_VIDEOFRAME_GET_GE2D_FORMAT (%d)",ge2dformat);
 
 	uint64_t size;
 	if (ioctl(_videoDev, AMVIDEO_EXT_CURRENT_VIDEOFRAME_GET_SIZE, &size) < 0)
@@ -237,12 +244,17 @@ int AmlogicGrabber::grabFrame_ge2d(Image<ColorRgb> & image)
 		return -1;
 	}
 
+    Debug(_log, "after AMVIDEO_EXT_CURRENT_VIDEOFRAME_GET_SIZE (%d)",size);
+
 	unsigned cropLeft    = _cropLeft;
 	unsigned cropRight   = _cropRight;
 	unsigned cropTop     = _cropTop;
 	unsigned cropBottom  = _cropBottom;
 	int videoWidth       = (size >> 32) - cropLeft - cropRight;
 	int videoHeight      = (size & 0xffffff) - cropTop - cropBottom;
+
+    Debug(_log, "Video size (%dx%d)", videoWidth, videoHeight);
+
 	
 	// calculate final image dimensions and adjust top/left cropping in 3D modes
 	switch (_videoMode)
@@ -259,6 +271,8 @@ int AmlogicGrabber::grabFrame_ge2d(Image<ColorRgb> & image)
 	default:
 		break;
 	}
+
+    Debug(_log, "Video size after videoMode (%dx%d)", videoWidth, videoHeight);
 
 	struct config_para_ex_s configex = { 0 };
 	configex.src_para.mem_type = CANVAS_TYPE_INVALID;
