@@ -211,7 +211,7 @@ int AmlogicGrabber::grabFrame_ge2d(Image<ColorRgb> & image)
 	int canvas_index;
 	if (ioctl(_videoDev, AMVIDEO_EXT_GET_CURRENT_VIDEOFRAME, &canvas_index) < 0)
 	{
-		Error(_log, "AMSTREAM_EXT_GET_CURRENT_VIDEOFRAME failed.");
+		Error(_log, "AMVIDEO_EXT_GET_CURRENT_VIDEOFRAME failed.");
 		return -1;
 	}
 
@@ -219,21 +219,21 @@ int AmlogicGrabber::grabFrame_ge2d(Image<ColorRgb> & image)
 
 	if (ioctl(_videoDev, AMVIDEO_EXT_CURRENT_VIDEOFRAME_GET_CANVAS0ADDR, &canvas0addr) < 0)
 	{
-		Error(_log, "AMSTREAM_EXT_CURRENT_VIDEOFRAME_GET_CANVAS0ADDR failed.");
+		Error(_log, "AMVIDEO_EXT_CURRENT_VIDEOFRAME_GET_CANVAS0ADDR failed.");
 		return -1;
 	}
 
 	uint32_t ge2dformat;
 	if (ioctl(_videoDev, AMVIDEO_EXT_CURRENT_VIDEOFRAME_GET_GE2D_FORMAT, &ge2dformat) <0)
 	{
-		Error(_log, "AMSTREAM_EXT_CURRENT_VIDEOFRAME_GET_GE2D_FORMAT failed.");
+		Error(_log, "AMVIDEO_EXT_CURRENT_VIDEOFRAME_GET_GE2D_FORMAT failed.");
 		return -1;
 	}
 
 	uint64_t size;
 	if (ioctl(_videoDev, AMVIDEO_EXT_CURRENT_VIDEOFRAME_GET_SIZE, &size) < 0)
 	{
-		Error(_log, "AMSTREAM_EXT_CURRENT_VIDEOFRAME_GET_SIZE failed.");
+		Error(_log, "AMVIDEO_EXT_CURRENT_VIDEOFRAME_GET_SIZE failed.");
 		return -1;
 	}
 
@@ -307,7 +307,7 @@ int AmlogicGrabber::grabFrame_ge2d(Image<ColorRgb> & image)
 	// Return video frame
 	if (ioctl(_videoDev, AMVIDEO_EXT_PUT_CURRENT_VIDEOFRAME) < 0)
 	{
-		Error(_log, "AMSTREAM_EXT_PUT_CURRENT_VIDEOFRAME failed.");
+		Error(_log, "AMVIDEO_EXT_PUT_CURRENT_VIDEOFRAME failed.");
 		return -1;
 	}
 
